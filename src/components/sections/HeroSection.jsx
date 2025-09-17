@@ -1,18 +1,60 @@
+import { useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, Mail } from "lucide-react";
+import { ArrowDown, Mail, Send } from "lucide-react";
 import { FiGithub, FiLinkedin } from "react-icons/fi";
 import { useTheme } from "../../context/ThemeContext";
 import PROFIL_IMG from "../../assets/images/robots.jpg";
 import { containerVariant, itemVariant } from "../../utils/helper";
+import { db } from "../../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
 const HeroSection = () => {
   const { isDarkMode } = useTheme();
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 500], [0, -100]);
 
+  const [showContactPopup, setShowContactPopup] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    if (element) element.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleInputChange = (key, value) => {
+    setFormData({ ...formData, [key]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      if (!formData.name || !formData.email || !formData.message) {
+        throw new Error("Veuillez remplir tous les champs.");
+      }
+
+      await addDoc(collection(db, "messages"), {
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        createdAt: serverTimestamp(),
+      });
+
+      setShowSuccess(true);
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => setShowSuccess(false), 3000);
+      setShowContactPopup(false);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Une erreur est survenue.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -30,11 +72,7 @@ const HeroSection = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        duration: 1,
-        ease: "easeOut",
-        delay: 0.5,
-      },
+      transition: { duration: 1, ease: "easeOut", delay: 0.5 },
     },
   };
 
@@ -44,44 +82,29 @@ const HeroSection = () => {
         isDarkMode ? "bg-gray-950 text-white" : "bg-gray-50 text-gray-500"
       }`}
     >
-      {/* section hero */}
       <motion.section id="home" style={{ y: heroY }}>
         <div className="min-h-screen flex items-center justify-center relative px-6 pt-8">
-          {/* animated background */}
+          {/* Animated background */}
           <div className="absolute inset-0 overflow-hidden">
             <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-                rotate: [0, 180, 360],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear",
-              }}
+              animate={{ scale: [1, 1.1, 1], rotate: [0, 180, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className={`absolute top-20 right-20 w-64 h-64 rounded-full blur-3xl opacity-10 ${
                 isDarkMode ? "bg-blue-500" : "bg-blue-400"
               }`}
             />
             <motion.div
-              animate={{
-                scale: [1.1, 1, 1.1],
-                rotate: [360, 180, 0],
-              }}
-              transition={{
-                duration: 25,
-                repeat: Infinity,
-                ease: "linear",
-              }}
+              animate={{ scale: [1.1, 1, 1.1], rotate: [360, 180, 0] }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
               className={`absolute bottom-20 left-20 w-48 h-48 rounded-full blur-3xl opacity-10 ${
                 isDarkMode ? "bg-purple-500" : "bg-purple-400"
               }`}
             />
           </div>
 
-          {/* main content */}
+          {/* Main content */}
           <div className="max-w-7xl mx-auto w-full z-10 mt-20">
-            {/* mobile layout */}
+            {/* Mobile layout */}
             <div className="block lg:hidden">
               <motion.div
                 initial="hidden"
@@ -89,7 +112,7 @@ const HeroSection = () => {
                 variants={containerVariant}
                 className="text-center"
               >
-                {/* profil image */}
+                {/* Profile image */}
                 <motion.div variants={imageVariant} className="mb-8">
                   <div className="w-32 h-32 mx-auto relative">
                     <motion.div
@@ -104,8 +127,6 @@ const HeroSection = () => {
                         className="w-full h-full object-cover"
                       />
                     </motion.div>
-
-                    {/* decoration ring */}
                     <motion.div
                       animate={{ rotate: 300 }}
                       transition={{
@@ -118,7 +139,7 @@ const HeroSection = () => {
                   </div>
                 </motion.div>
 
-                {/* content mail */}
+                {/* Content */}
                 <motion.div
                   variants={textVariant}
                   className={`text-sm uppercase tracking-widest ${
@@ -127,7 +148,6 @@ const HeroSection = () => {
                 >
                   Developpeur Full Stack
                 </motion.div>
-
                 <motion.h1
                   variants={itemVariant}
                   className="text-3xl md:text-3xl font-light mb-6 leading-tight"
@@ -140,7 +160,6 @@ const HeroSection = () => {
                   <span className="text-red-500 font-medium ml-2">
                     l’expérience digitale
                   </span>
-                  {/* <br /> */}
                   <span
                     className={` ml-2 ${
                       isDarkMode ? "text-white" : "text-gray-900"
@@ -149,7 +168,6 @@ const HeroSection = () => {
                     qui a du sens
                   </span>
                 </motion.h1>
-
                 <motion.p
                   variants={itemVariant}
                   className={`text-base md:text-lg ${
@@ -163,7 +181,7 @@ const HeroSection = () => {
                   l’interface utilisateur jusqu’à la gestion des données.
                 </motion.p>
 
-                {/* button pour mobile */}
+                {/* Buttons */}
                 <motion.div
                   variants={itemVariant}
                   className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
@@ -179,7 +197,7 @@ const HeroSection = () => {
                   <motion.button
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => scrollToSection("Contact")}
+                    onClick={() => setShowContactPopup(true)}
                     className={`border ${
                       isDarkMode
                         ? "border-gray-300 hover:border-gray-600 text-gray-300"
@@ -190,7 +208,7 @@ const HeroSection = () => {
                   </motion.button>
                 </motion.div>
 
-                {/* social link */}
+                {/* Social links */}
                 <motion.div
                   variants={itemVariant}
                   className="flex justify-center space-x-6 mb-8"
@@ -217,9 +235,9 @@ const HeroSection = () => {
               </motion.div>
             </div>
 
-            {/* desktop layout */}
+            {/* Desktop layout */}
             <div className="hidden lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
-              {/* partie gauche */}
+              {/* Left side */}
               <motion.div
                 initial="hidden"
                 animate="visible"
@@ -233,7 +251,6 @@ const HeroSection = () => {
                 >
                   Developpeur Full Stack
                 </motion.div>
-
                 <motion.h1
                   variants={itemVariant}
                   className="text-5xl xl:text-6xl font-light mb-8 leading-tight"
@@ -246,7 +263,6 @@ const HeroSection = () => {
                   <span className="text-red-500 font-medium ml-2 ">
                     l’expérience digitale
                   </span>
-                  {/* <br /> */}
                   <span
                     className={`ml-2 ${
                       isDarkMode ? "text-white" : "text-gray-900"
@@ -255,7 +271,6 @@ const HeroSection = () => {
                     qui a du sens
                   </span>
                 </motion.h1>
-
                 <motion.p
                   variants={itemVariant}
                   className={`text-xl ${
@@ -269,7 +284,7 @@ const HeroSection = () => {
                   l’interface utilisateur jusqu’à la gestion des données.
                 </motion.p>
 
-                {/* button desktop */}
+                {/* Buttons desktop */}
                 <motion.div variants={itemVariant} className="flex gap-6 mb-8">
                   <motion.button
                     whileHover={{ y: -2 }}
@@ -282,7 +297,7 @@ const HeroSection = () => {
                   <motion.button
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => scrollToSection("Contact")}
+                    onClick={() => setShowContactPopup(true)}
                     className={`border ${
                       isDarkMode
                         ? "border-gray-700 hover:border-gray-600 text-gray-300"
@@ -293,7 +308,7 @@ const HeroSection = () => {
                   </motion.button>
                 </motion.div>
 
-                {/* social link desktop */}
+                {/* Social links */}
                 <motion.div
                   variants={itemVariant}
                   className="flex space-x-6 mb-13"
@@ -318,7 +333,8 @@ const HeroSection = () => {
                   ))}
                 </motion.div>
               </motion.div>
-              {/* partie droite */}
+
+              {/* Right side */}
               <motion.div
                 initial="hidden"
                 variants={imageVariant}
@@ -326,60 +342,63 @@ const HeroSection = () => {
                 className="flex justify-center lg:justify-end"
               >
                 <div className="relative">
+                  {/* tech tags */}
                   <motion.div
                     variants={itemVariant}
                     className="flex item-center space-x-8 text-xs uppercase tracking-widest absolute -top-16 -left-28"
                   >
                     <span
                       className={`${
-                        isDarkMode ? "text-gray-600" : "text-gray-500"
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                     >
                       React
                     </span>
                     <span
                       className={`${
-                        isDarkMode ? "text-gray-700" : "text-gray-400"
+                        isDarkMode ? "text-gray-600" : "text-gray-400"
                       }`}
                     >
                       .
                     </span>
                     <span
                       className={`${
-                        isDarkMode ? "text-gray-600" : "text-gray-500"
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                     >
                       Node js
                     </span>
                     <span
                       className={`${
-                        isDarkMode ? "text-gray-700" : "text-gray-400"
+                        isDarkMode ? "text-gray-600" : "text-gray-400"
                       }`}
                     >
                       .
                     </span>
                     <span
                       className={`${
-                        isDarkMode ? "text-gray-600" : "text-gray-500"
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                     >
                       Javascript
                     </span>
                     <span
                       className={`${
-                        isDarkMode ? "text-gray-700" : "text-gray-400"
+                        isDarkMode ? "text-gray-600" : "text-gray-400"
                       }`}
                     >
                       .
                     </span>
                     <span
                       className={`${
-                        isDarkMode ? "text-gray-600" : "text-gray-500"
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
                       }`}
                     >
                       Firebase
                     </span>
                   </motion.div>
+
+                  {/* profile image */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className={`w-80 h-96 rounded-3xl overflow-hidden border-4 ${
@@ -393,8 +412,7 @@ const HeroSection = () => {
                     />
                   </motion.div>
 
-                  {/* decorative element */}
-
+                  {/* rotating borders */}
                   <motion.div
                     animate={{ rotate: 300 }}
                     transition={{
@@ -402,7 +420,8 @@ const HeroSection = () => {
                       repeat: Infinity,
                       ease: "linear",
                     }}
-                    className="absolute -inset-4 rounded-3xl border-blue-500/20"
+                    className="absolute -inset-4 rounded-3xl border-4 border-blue-500/50"
+                    style={{ filter: "drop-shadow(0 0 10px #3b82f6)" }}
                   />
                   <motion.div
                     animate={{ rotate: -300 }}
@@ -411,14 +430,15 @@ const HeroSection = () => {
                       repeat: Infinity,
                       ease: "linear",
                     }}
-                    className="absolute -inset-8 rounded-3xl border-purple-500/10"
+                    className="absolute -inset-8 rounded-3xl border-4 border-red-500/50"
+                    style={{ filter: "drop-shadow(0 0 10px #a855f7)" }}
                   />
                 </div>
               </motion.div>
             </div>
           </div>
 
-          {/* scroll indicator */}
+          {/* Scroll indicator */}
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -431,6 +451,76 @@ const HeroSection = () => {
           </motion.div>
         </div>
       </motion.section>
+
+      {/* Popup contact */}
+      {showContactPopup && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.8 }}
+            className={`bg-white dark:bg-gray-900 p-8 rounded-2xl max-w-md w-full relative`}
+          >
+            <button
+              className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 font-bold text-xl"
+              onClick={() => setShowContactPopup(false)}
+            >
+              ×
+            </button>
+            <h3 className="text-2xl font-medium mb-6 text-center">
+              Contactez-moi
+            </h3>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Nom"
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800"
+              />
+              <textarea
+                placeholder="Message"
+                value={formData.message}
+                onChange={(e) => handleInputChange("message", e.target.value)}
+                className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800"
+                rows={4}
+              ></textarea>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                disabled={isSubmitting}
+                type="submit"
+                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl flex justify-center items-center gap-2"
+              >
+                {isSubmitting ? (
+                  "Envoi..."
+                ) : (
+                  <>
+                    <Send size={18} /> Envoyer
+                  </>
+                )}
+              </motion.button>
+            </form>
+            {showSuccess && (
+              <p className="text-green-500 mt-4 text-center">
+                Message envoyé avec succès !
+              </p>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 };
