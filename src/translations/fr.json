@@ -1,0 +1,15 @@
+{
+  "navbar": ["Accueil", "Compétences", "Projets", "À propos", "Contact"],
+  "hero": {
+    "role": "Développeur Full Stack",
+    "title1": "Façonner",
+    "title2": "l’expérience digitale",
+    "title3": "qui a du sens",
+    "description": "Je suis développeur full-stack, passionné par la création d’applications web modernes et performantes. Mon expertise couvre aussi bien le front-end que le back-end, ce qui me permet de concevoir des solutions complètes allant de l’interface utilisateur jusqu’à la gestion des données.",
+    "projectsButton": "Voir mes projets",
+    "contactButton": "Contactez-moi"
+  }
+}
+
+
+

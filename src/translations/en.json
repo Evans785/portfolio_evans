@@ -1,0 +1,12 @@
+{
+  "navbar": ["Home", "Skills", "Projects", "About", "Contact"],
+  "hero": {
+    "role": "Full Stack Developer",
+    "title1": "Shaping",
+    "title2": "digital experience",
+    "title3": "that makes sense",
+    "description": "I am a full-stack developer passionate about creating modern and performant web applications. My expertise covers both front-end and back-end, allowing me to design complete solutions from user interface to data management.",
+    "projectsButton": "See my projects",
+    "contactButton": "Contact me"
+  }
+}
