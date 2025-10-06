@@ -14,6 +14,7 @@ const HeroSection = () => {
   const heroY = useTransform(scrollY, [0, 500], [0, -100]);
 
   const [showContactPopup, setShowContactPopup] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -189,7 +190,7 @@ const HeroSection = () => {
                   <motion.button
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => scrollToSection("work")}
+                    onClick={() => scrollToSection("Projets")}
                     className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-sm uppercase tracking-widest font-medium transition-all duration-300"
                   >
                     Voir mes projets
@@ -249,7 +250,7 @@ const HeroSection = () => {
                     isDarkMode ? "text-gray-500" : "text-gray-800"
                   } mb-6`}
                 >
-                  Developpeur Full Stack
+                  Developpeur Full Stack & Testeur QA
                 </motion.div>
                 <motion.h1
                   variants={itemVariant}
@@ -289,7 +290,7 @@ const HeroSection = () => {
                   <motion.button
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => scrollToSection("work")}
+                    onClick={() => scrollToSection("Projets")}
                     className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-sm uppercase tracking-widest font-medium transition-all duration-300"
                   >
                     Voir mes projets

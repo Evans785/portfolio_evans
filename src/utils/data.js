@@ -19,12 +19,12 @@ import {
 import { FiGithub, FiLinkedin, FiMail, FiTwitter } from "react-icons/fi";
 
 import ROBOT from "../assets/images/robots.jpg";
-import PROJECT_IMG_1 from "../assets/images/projet1.jpg";
-import PROJECT_IMG_2 from "../assets/images/projet2.jpg";
-import PROJECT_IMG_3 from "../assets/images/projet3.jpg";
+import PROJECT_IMG_1 from "../assets/images/eCommerce.png";
+import PROJECT_IMG_2 from "../assets/images/blogGeneratrice.png";
+import PROJECT_IMG_3 from "../assets/images/gestionTache.png";
 import PROJECT_IMG_4 from "../assets/images/projet4.jpg";
-import PROJECT_IMG_5 from "../assets/images/projet5.jpg";
-import PROJECT_IMG_6 from "../assets/images/projet4.jpg";
+import PROJECT_IMG_5 from "../assets/images/construction.png";
+import PROJECT_IMG_6 from "../assets/images/depense.png";
 import PROJECT_IMG_7 from "../assets/images/projet7.jpg";
 //  import PROJECT_IMG_8 from "../assets/images/projet8.jpg";
 
@@ -225,24 +225,25 @@ export const PROJECTS = [
     description:
       "Développement d’applications de gestion de tâches efficaces pour organiser, suivre et prioriser les activités facilement.",
     image: PROJECT_IMG_3,
-    tags: ["next js", "typescript", "framer motion"],
-    liveUrl: "#",
-    githubUrl: "#",
+    tags: ["Javascript", "React js", "css", "Framer-motion"],
+    liveUrl: "https://taskmate-chi-roan.vercel.app",
+    githubUrl: "https://github.com/Evans785/taskmate.git",
     featured: true,
     category: "Application web",
   },
   {
     id: 4,
-    title: "Application d’entretien",
+    title: "Application testée (QA)",
     description:
-      "Développement d’applications pour organiser et gérer des entretiens efficacement, avec suivi et planification intégrés.",
+      "Mise en place et exécution de tests fonctionnels et E2E avec Cypress sur une application d’entretien. Vérification du flux complet : inscription, connexion, et gestion des entretiens. Utilisation de Postman pour la validation des API et rédaction de cas de test détaillés.",
     image: PROJECT_IMG_4,
-    tags: ["next js", "typescript", "framer motion"],
+    tags: ["Cypress", "Postman", "Testing", "QA", "JavaScript"],
     liveUrl: "#",
     githubUrl: "#",
     featured: false,
-    category: "Application web",
+    category: "Qualité logicielle / Test QA",
   },
+
   {
     id: 5,
     title: "Application de construction",

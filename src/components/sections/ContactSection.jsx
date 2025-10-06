@@ -9,7 +9,7 @@ import SuccessModel from "../SuccessModel";
 import { db } from "../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { logSocialClick } from "../../utils/helper";
-import { logCallRequest } from "../../utils/helper";
+import toast, { Toaster } from "react-hot-toast"; // ajout toast
 
 const ContactSection = () => {
   const { isDarkMode } = useTheme();
@@ -22,12 +22,9 @@ const ContactSection = () => {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [callChoice, setCallChoice] = useState(false); // modal choix appel
 
-  const isInView = useInView(sectionRef, {
-    once: true,
-    margin: "-100px",
-  });
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -37,22 +34,28 @@ const ContactSection = () => {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   const handleInputChange = (key, value) => {
-    setFormData({
-      ...formData,
-      [key]: value,
-    });
+    setFormData({ ...formData, [key]: value });
   };
+
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setIsSubmitting(true);
 
-    try {
-      if (!formData.name || !formData.email || !formData.message) {
-        throw new Error("Veuillez remplir tous les champs.");
-      }
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Tous les champs sont obligatoires !");
+      setIsSubmitting(false);
+      return;
+    }
 
+    if (!validateEmail(formData.email)) {
+      toast.error("Veuillez entrer une adresse e-mail valide !");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
       const docRef = await addDoc(collection(db, "messages"), {
         name: formData.name,
         email: formData.email,
@@ -60,22 +63,30 @@ const ContactSection = () => {
         createdAt: serverTimestamp(),
       });
 
-      console.log("Message saved with id:", docRef.id);
       setShowSuccess(true);
       setFormData({ name: "", email: "", message: "" });
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err) {
-      console.error("Erreur lors de l'envoi du message :", err);
-
-      const userMsg =
-        err?.code === "permission-denied"
-          ? "Permission refusée (sécurité Firestore). Vérifie les règles Firestore."
-          : err?.message || "Une erreur est survenue. Réessayez plus tard.";
-      setError(userMsg);
-      alert(userMsg);
+      console.error(err);
+      toast.error("Une erreur est survenue. Réessayez plus tard.");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCall = () => {
+    setCallChoice(true);
+  };
+
+  const startCall = () => {
+    window.location.href = "tel:+2250759884664";
+  };
+
+  const startWhatsApp = () => {
+    const message = encodeURIComponent(
+      "Bonjour ! Je souhaite discuter d'un projet."
+    );
+    window.open(`https://wa.me/+2250759884664?text=${message}`, "_blank");
   };
 
   return (
@@ -86,7 +97,7 @@ const ContactSection = () => {
         isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
       } relative overflow-hidden`}
     >
-      {/* background element */}
+      <Toaster position="top-right" /> {/* toast */}
       <motion.div style={{ y }} className="absolute inset-0 overflow-hidden">
         <div
           className={`absolute top-20 left-1/4 w-72 h-72 rounded-full blur-3xl opacity-5 ${
@@ -99,7 +110,6 @@ const ContactSection = () => {
           }`}
         />
       </motion.div>
-
       <div className="max-w-6xl mx-auto relative z-10">
         {/* section header */}
         <motion.div
@@ -212,6 +222,7 @@ const ContactSection = () => {
               </div>
             </motion.div>
           </motion.div>
+
           {/* Contact info && social link */}
           <motion.div
             initial="hidden"
@@ -219,7 +230,7 @@ const ContactSection = () => {
             variants={containerVariant}
             className="space-y-8"
           >
-            {/* Contact info  */}
+            {/* Contact info */}
             <motion.div variants={itemVariant}>
               <h3 className="text-2xl font-medium mb-6">
                 Informations de contact
@@ -257,7 +268,8 @@ const ContactSection = () => {
                 ))}
               </div>
             </motion.div>
-            {/* social link  */}
+
+            {/* social link */}
             <motion.div variants={itemVariant}>
               <h3 className="text-xl font-medium mb-6">Suivez moi</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -282,7 +294,8 @@ const ContactSection = () => {
                 ))}
               </div>
             </motion.div>
-            {/* available statut*/}
+
+            {/* available statut */}
             <motion.div
               variants={itemVariant}
               className={`p-6 rounded-xl border ${
@@ -308,7 +321,8 @@ const ContactSection = () => {
             </motion.div>
           </motion.div>
         </div>
-        {/* bottom cta*/}
+
+        {/* bottom cta */}
         <motion.div
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
@@ -342,10 +356,47 @@ const ContactSection = () => {
                   ? "border-gray-600 hover:border-red-500 hover:text-red-500"
                   : "border-gray-300 hover:border-red-500 hover:text-red-600"
               }`}
-              onClick={() => logCallRequest()}
+              onClick={handleCall}
             >
               Planifier un appel
             </motion.button>
+
+            {/* modal choix appel */}
+            {callChoice && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl space-y-4">
+                  <h3 className="text-lg font-medium mb-2">
+                    Choisissez une option
+                  </h3>
+                  <div className="flex gap-4">
+                    <button
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                      onClick={() => {
+                        startCall();
+                        setCallChoice(false);
+                      }}
+                    >
+                      Appel direct
+                    </button>
+                    <button
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                      onClick={() => {
+                        startWhatsApp();
+                        setCallChoice(false);
+                      }}
+                    >
+                      WhatsApp
+                    </button>
+                    <button
+                      className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded"
+                      onClick={() => setCallChoice(false)}
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       </div>
