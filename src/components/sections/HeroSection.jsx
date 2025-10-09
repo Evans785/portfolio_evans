@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, Mail, Send } from "lucide-react";
 import { FiGithub, FiLinkedin } from "react-icons/fi";
 import { useTheme } from "../../context/ThemeContext";
-import PROFIL_IMG from "../../assets/images/robots.jpg";
+import PROFIL_IMG from "../../assets/images/evans-costa.png";
 import { containerVariant, itemVariant } from "../../utils/helper";
 import { db } from "../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -147,7 +147,7 @@ const HeroSection = () => {
                     isDarkMode ? "text-gray-500" : "text-gray-400"
                   } mb-4`}
                 >
-                  Developpeur Full Stack
+                  Developpeur Full Stack & Testeur QA
                 </motion.div>
                 <motion.h1
                   variants={itemVariant}
@@ -215,9 +215,15 @@ const HeroSection = () => {
                   className="flex justify-center space-x-6 mb-8"
                 >
                   {[
-                    { icon: FiGithub, href: "#" },
-                    { icon: FiLinkedin, href: "#" },
-                    { icon: Mail, href: "#" },
+                    { icon: FiGithub, href: "https://github.com/Evans785" },
+                    {
+                      icon: FiLinkedin,
+                      href: "https://www.linkedin.com/in/yann-evans-adje-57749328b/",
+                    },
+                    {
+                      icon: Mail,
+                      href: "https://mail.google.com/mail/?view=cm&fs=1&to=yannpaulevansadje@gmail.com",
+                    },
                   ].map((social, index) => (
                     <motion.a
                       key={index}
@@ -315,9 +321,15 @@ const HeroSection = () => {
                   className="flex space-x-6 mb-13"
                 >
                   {[
-                    { icon: FiGithub, href: "#" },
-                    { icon: FiLinkedin, href: "#" },
-                    { icon: Mail, href: "#" },
+                    { icon: FiGithub, href: "https://github.com/Evans785" },
+                    {
+                      icon: FiLinkedin,
+                      href: "https://www.linkedin.com/in/yann-evans-adje-57749328b/",
+                    },
+                    {
+                      icon: Mail,
+                      href: "https://mail.google.com/mail/?view=cm&fs=1&to=yannpaulevansadje@gmail.com",
+                    },
                   ].map((social, index) => (
                     <motion.a
                       key={index}

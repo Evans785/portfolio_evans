@@ -384,7 +384,7 @@ export const SOCIAL_LINKS = [
   {
     name: "Email",
     icon: FiMail,
-    url: "yannpaulevansadje@gmail.com",
+    url: "https://mail.google.com/mail/?view=cm&fs=1&to=yannpaulevansadje@gmail.com",
     color: "hover:text-green-400",
     bgColor: "hover:bg-green-500/10",
   },

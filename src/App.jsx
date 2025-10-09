@@ -22,7 +22,7 @@ import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { AdminAuthProvider } from "./context/AdminAuthContext";
 
-// 🔹 Composant pour protéger les routes Admin
+//  Composant pour protéger les routes Admin
 const ProtectedRoute = ({ isAdmin, children }) => {
   if (!isAdmin) {
     return <Navigate to="/admin/login" replace />;
